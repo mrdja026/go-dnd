@@ -85,7 +85,8 @@ func (t *Tile) SetOccupant(occupant string) error {
 	return nil
 }
 
-// TODO: Implement remove Occupant
 func (t Tile) GetTile() Tile {
 	return t
 }
+
+// TODO: Implement remove Occupant
