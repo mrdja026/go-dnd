@@ -1,8 +1,6 @@
 package player
 
-import (
-	"example.com/grid"
-)
+import "dnd.go/pkg/grid"
 
 type Player struct {
 	name string
