@@ -6,9 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	dnddata "dnd.go/pkg/service/dnd_data"
+	"github.com/supabase-community/supabase-go"
 )
 
 func Get_Domain(w http.ResponseWriter, r *http.Request) {
@@ -46,13 +46,33 @@ func GetClasses(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Println("GET params were:", r.URL.Query())
 	resp := dnddata.GetClasses()
-	time.Sleep(2 * time.Second)
 	jsonResponse, err := json.Marshal(resp)
 	if err != nil {
 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
 	}
 	fmt.Print("stignem do ovde")
 	w.Write(jsonResponse)
+	return
+
+}
+
+func Encouter(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	encouterId := r.URL.Query().Get("q")
+	fmt.Println("GET params were:" + encouterId)
+	client, err := supabase.NewClient(API_URL, API_KEY, nil)
+
+	if err != nil {
+		fmt.Println("cannot initalize client", err)
+	}
+	data, _, sqlErr := client.From("encounter").Select("*", "GET", false).Eq("id", encouterId).Execute()
+	if sqlErr != nil {
+		fmt.Println("cannot get encouter", sqlErr)
+		panic(sqlErr)
+	}
+	fmt.Println(data)
+	w.WriteHeader(http.StatusFound)
+	w.Write([]byte("Encouter returned"))
 	return
 
 }

@@ -7,15 +7,14 @@ import (
 	"net/http"
 	"os"
 
-	routes "dnd.go/pkg/api/routes"
+	"dnd.go/pkg/api/routes"
 )
 
 // move this to character
-type Character struct {
-	name      string `json:"name"`
-	partyNo   string `json:"partyNo"`
-	raceName  string `json:"raceName"`
-	className string `json:"className"`
+type Player struct {
+	name  string
+	class string
+	race  string
 }
 
 func main() {
@@ -23,8 +22,8 @@ func main() {
 	http.HandleFunc("/hello", routes.Get_Hello)
 	http.HandleFunc("/races", corsMiddleware(routes.GetRaces))
 	http.HandleFunc("/classes", corsMiddleware(routes.GetClasses))
-
-	http.HandleFunc("/start", corsMiddleware(validateRequestCharacter(start_game)))
+	http.Handle("/encounter", corsMiddleware(http.HandlerFunc(routes.Encouter)))
+	http.HandleFunc("/start", corsMiddleware(validateRequestCharacter(routes.Add)))
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -45,7 +44,7 @@ func main() {
 // move this to general routes and write impl
 func start_game(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var character Character
+	var character Player
 	err := json.NewDecoder(r.Body).Decode(&character)
 	if err != nil {
 		fmt.Print(err)
