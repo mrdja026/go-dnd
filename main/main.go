@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mrdja026/go-dnd/api/routes"
+	routes "dnd.go/pkg/api"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package grid
 import (
 	"errors"
 
-	"example.com/tile"
+	"dnd.go/pkg/tile"
 )
 
 type JsonGrid struct {
