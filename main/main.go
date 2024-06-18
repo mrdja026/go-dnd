@@ -1,12 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
 
+	"dnd.go/db"
 	"dnd.go/pkg/api/routes"
 )
 
@@ -24,6 +24,8 @@ func main() {
 	http.HandleFunc("/classes", corsMiddleware(routes.GetClasses))
 	http.Handle("/encounter", corsMiddleware(http.HandlerFunc(routes.Encouter)))
 	http.HandleFunc("/start", corsMiddleware(validateRequestCharacter(routes.Add)))
+	// http.HandleFunc("/createDb", runner)
+	http.HandleFunc("/getData", runner)
 
 	err := http.ListenAndServe(":3333", nil)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -41,17 +43,10 @@ func main() {
 	fmt.Printf("Server started on port 3333\n")
 }
 
-// move this to general routes and write impl
-func start_game(w http.ResponseWriter, r *http.Request) {
+// use this for temp endpoint to create db
+func runner(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var character Player
-	err := json.NewDecoder(r.Body).Decode(&character)
-	if err != nil {
-		fmt.Print(err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
+	db.GetData()
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("Game started"))
 
